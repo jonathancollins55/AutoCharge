@@ -24,15 +24,15 @@ async def switchPlug_whenBatteryLow(ip_addr):
 
     #Get battery percentage
     battery = psutil.sensors_battery()
-    threshold_percentage = bool(battery.percent > 30)
+    threshold_percentage = bool(battery.percent <= 32)
 
     #Turn plug on of battery is less than 30%
     plug = ks.SmartPlug(ip_addr)
     await plug.update()
     if threshold_percentage:
-        await plug.turn_off()
+        await plug.turn_on()
         return
-    await plug.turn_on()
+    if int(battery.percent) == 100: await plug.turn_off()
 
 asyncio.run(switchPlug_whenBatteryLow(environment_vars.get('Plug_ip_addr')))
 # asyncio.run(switch_smartPlug(environment_vars.get('Plug_ip_addr')))
